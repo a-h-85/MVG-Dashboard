@@ -1,0 +1,775 @@
+<!-- HOW TO
+Replace <<HOST>> with server
+Replace <<OPEN_API_KEY>> with Open Weather API key 
+Replace <<weather_place>> with Open Weather location. format: q=location, example: q=Thalkirchen
+Replace <<location>> with the location / station to set page title
+Replace <<accu_key>> with the Accu Weather API key
+Replace <<accu_location_id>> with the accu weather location
+
+Ressources:
+- line logo, example <<host>>/u3.png to display the logo
+- jquery from google
+- current line info from mvg, hosted on own server, example <<HOST>>/mvg2.json
+- current mvg interruptions from mvg, hosted on own server, example <<HOST>>/interruptions.json
+
+-->
+
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta https-equiv="Content-Type" content="text/html; charset=UTF-8">    
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- ipad landscape 1024 x 671 px portrait 768 x 927 px /// iphone 375 x 627 //. 667 x 335-->
+    <!--<=400
+    >400 <=800
+    >800-->
+    <title>MVG Now - <<location>></title>
+    
+    <style>
+     body
+        {
+          background-color: #424bf4;
+          color: white;
+          font-family: Helvetica;
+          font-size: calc(14px + (26 - 14) * ((100vw - 400px) / (1600 - 400)));
+          font-style: bold;
+          /*width: 1024;
+          height: 768; */
+          border-style: solid;
+          border-width: 1px;
+          margin: 0;
+          padding: 0;
+          text-align: center;
+        }
+.wrapper 
+{
+  display: flex;
+  flex-flow: row wrap;
+}
+
+/* We tell all items to be 100% width, via flex-basis */
+.wrapper > * 
+{
+  flex: 1 100%;
+  border-width: 1px;
+  border-style: solid;
+}
+/* Large screens */
+@media all and (min-width: 400px) {
+  /* We invert order of first sidebar and main
+   * And tell the main element to take twice as much width as the other two sidebars 
+   */
+ /*
+  doppelte größe
+  .t1 { flex: 2 0px; }
+  */
+  .t1 
+  { 
+    order: 1;
+    flex:1 auto;
+    display: flex;
+    flex-flow: row wrap;
+      }
+    #date_time3
+       {
+          order: 1;
+          line-height: 150px;
+          font-size: 100px;
+          flex: 1 100%;
+          border-width: 1px;
+          border-style: solid;
+  
+        } 
+    #day
+       {
+          order: 2;
+          line-height: 50px;
+          font-size: 30px;
+          flex: 1 100%;
+          border-width: 1px;
+          border-style: solid;
+        }
+    #sun
+      {
+          order:3;
+          line-height: 75px;
+          flex: 1 100%;
+          display: flex;
+          flex-flow: row wrap;
+          border-width: 1px;
+          border-style: solid;
+      }
+      #rise
+        {
+          flex:1 auto;
+          order:1;
+          border-width: 1px;
+          border-style: solid;
+        }
+      #set
+        {
+          flex:1 auto;
+          order:2;
+          border-width: 1px;
+          border-style: solid;
+        }
+  .t2 
+  { 
+        order: 2;
+        flex:1 auto; 
+        display: flex;
+        flex-flow: row wrap;
+      }
+    #container_temp
+    {
+      flex:1 100%; 
+      display: flex;
+      flex-flow: row wrap;
+    }
+
+    #temp
+      {
+          order: 1;
+          line-height: 200px;
+          font-size: 100px;
+          flex: 1 2;
+          border-width: 1px;
+          border-style: solid;
+      }
+      
+      #maxmin
+      {
+        order: 2;
+          line-height: 200px;
+          font-size: 100px;
+          flex: 1 1;
+          border-width: 1px;
+          border-style: solid;
+          display: flex;
+          flex-flow: row wrap;
+      }
+      #max
+      {
+        order: 1;
+        line-height: 100px;
+        font-size: 50px;
+        flex: 1 100%;
+        border-width: 1px;
+          border-style: solid;
+      }
+      #min
+      {
+        order: 2;
+        line-height: 100px;
+        font-size: 50px;
+        flex: 1 100%;
+        border-width: 1px;
+          border-style: solid;
+      }
+
+    #basics
+      {
+        line-height: 75px;
+        order: 2;
+        flex: 1 100%; 
+        display: flex;
+        flex-flow: row wrap;
+        border-width: 1px;
+        border-style: solid;
+      }
+      #humidity
+        {
+          flex:1 auto;
+          order:1;
+          border-width: 1px;
+          border-style: solid;
+        }
+      #wind
+        {
+          flex:1 auto;
+          order:1;
+          border-width: 1px;
+          border-style: solid;
+        }
+  .t3 
+  { 
+    order: 3;
+    flex: 1 auto;
+    display: flex;
+    flex-flow: row wrap;
+     }
+    #icon
+      {
+        order: 1;
+        line-height: 200px;
+        font-size: 30px;
+        flex: 1 100%;
+        border-width: 1px;
+        border-style: solid;
+      }
+    #advanced
+      {
+        line-height: 75px;
+        order: 2;
+        flex: 1 100%; 
+        display: flex;
+        flex-flow: row wrap;
+        border-width: 1px;
+        border-style: solid;
+      }
+        #clouds
+        {
+          flex:1 auto;
+          order:1;
+          border-width: 1px;
+          border-style: solid;
+        }
+        #visibility
+        {
+          flex:1 auto;
+          order:2;
+          border-width: 1px;
+          border-style: solid;
+        }
+        #pressure
+          {
+          flex:1 auto;
+          order:3;
+          border-width: 1px;
+          border-style: solid;
+          }
+.break  { order: 4; flex-basis: 100%;   width: 0px;   height: 0px;   overflow: hidden; }
+  .t4 
+      { 
+        order: 5;
+        display: flex;
+        flex-flow: row wrap;
+        border-style: solid;
+        font-size: 25px;
+        justify-content: center;
+      }
+      #fcast
+      {
+        flex:1 auto;
+        display: flex;
+        flex-flow: row wrap;
+        border-width: 1px;
+        border-style: solid;
+        padding: 0 5px 0 5px;
+        margin: 0 5px 0 5px;
+      }
+      #temps
+      {
+        order:1;
+        flex:1 100%;
+        border-width: 1px;
+        border-style: solid;
+        padding: 0 5px 0 5px;
+        margin: 0 5px 0 5px;
+      }
+      #icons
+      {
+        order:2;
+        flex:1 100%;
+        border-width: 1px;
+        border-style: solid;
+        padding: 0 5px 0 5px;
+        margin: 0 5px 0 5px;
+      }
+      #finals
+      {
+        order:3;
+        flex:1 100%;
+        border-width: 1px;
+        border-style: solid;
+        padding: 0 5px 0 5px;
+        margin: 0 5px 0 5px;
+      }
+  .break  { order: 6; flex-basis: 100%;   width: 0px;   height: 0px;   overflow: hidden; }
+  .mvg { order: 7; }
+  #mvg2
+    {
+      font-size: 50px;
+    }
+      #u3
+        {
+          padding: 8 8 0 50;
+          width: 80px;
+          height: 40px;
+          float: left;
+          content:url(<<HOST>>/U3.png);
+        }
+      #station
+        {
+          padding-left: 20;
+          width: 30%;
+          float: left;
+          text-align: left;
+        }
+      #time
+        {
+          width: 15%;
+          float: left;
+          padding-left: 20;
+        }
+      #minutes
+        {
+          width: 25%;
+          float: right;
+          padding-right: 50px;
+        }
+
+}
+    </style>
+
+    <!--jQuery !!!!!!!!Replace with <<HOST>>-->
+    <script type="text/javascript" src="./Dashboard_Thalkirchen_files/jquery.min.js" language="JavaScript"></script>
+    
+    <!--Date Funktion !!!!! Load funkctions!!!!-->
+    <script type="text/javascript" language="JavaScript">
+      $(document).ready(function() {
+      function date_time()
+        {
+          date = new Date;
+          year = date.getFullYear();
+          month = date.getMonth();
+          months = new Array('01','02','03','04','05','06','07','08','09','10','11','12');
+          d = date.getDate();
+          if(d<10)
+          {
+            d = "0"+d;
+          }
+          day = date.getDay();
+          days = new Array('Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag');
+          h = date.getHours();
+          if(h<10)
+            { 
+              h = "0"+h;
+            }
+            m = date.getMinutes();
+          if(m<10)
+            {
+               m = "0"+m;
+            }
+            s = date.getSeconds();
+          if(s<10)
+            {
+               s = "0"+s;
+            }
+          result = ''+days[day]+', '+d+'.'+months[month]+'.'+year+', '+h+':'+m+' Uhr';
+          $('#date_time2').html(result);
+          result2 = ''+h+':'+m+'';
+          $('#date_time3').html(result2);
+          result3 = ''+days[day]+', '+d+'.'+months[month]+'.'+year+'';
+          $('#day').html(result3);
+          //document.getElementById(id).innerHTML = result;
+          
+         }
+         setInterval(date_time,1000);
+         date_time();
+       });
+    </script>
+    
+    <!-- Current Weather APi -->
+    <script type="text/javascript" language="javascript">
+      $(document).ready(function()
+       {
+			  function fetch()
+          {
+            $.getJSON('https://api.openweathermap.org/data/2.5/weather?<<weather_place>>&units=metric&lang=de&APPID=<<OPEN_API_KEY>>', function(wetterj)
+              {
+                console.log(wetterj);
+                $('#stage').empty();
+                $('#temp').empty();
+                $('#icon').empty();
+                $('#humidity').empty();
+                $('#pressure').empty();
+                $('#visibility').empty();
+                $('#wind').empty();
+                $('#clouds').empty();
+                $('#rise').empty();
+                $('#set').empty();
+
+                //lokale Zeit
+                var jetzt = new Date();
+                var days = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+                var Wochentag = days[ jetzt.getDay() ];
+                var Tag = jetzt.getDate();
+                var months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+                var Monat = months[ jetzt.getMonth() ];
+                var Datum = Tag + '.' + Monat + '.';
+                var hoursjetzt = jetzt.getHours();
+                var minutesjetzt = "0" + jetzt.getMinutes();
+                var uhrzeit = hoursjetzt + ':' + minutesjetzt.substr(-2);
+                //WetterUpdate
+                var unixTimestamp = wetterj.dt;
+                var date = new Date(unixTimestamp*1000);
+                var hours_update = date.getHours();
+                var minutes_update = "0" + date.getMinutes();
+                var wetterupdate = hours_update + ':' + minutes_update.substr(-2);
+                //Sonnenaufgang
+                var sunrisej = wetterj.sys.sunrise;
+                var sunrise = new Date(sunrisej*1000);
+                // Create a new JavaScript Date object based on the timestamp
+                // multiplied by 1000 so that the argument is in milliseconds, not seconds.
+                // var date = new Date(unix_timestamp*1000);
+                // Hours part from the timestamp
+                var hourssunrise = sunrise.getHours();
+                // Minutes part from the timestamp
+                var minutessunrise = "0" + sunrise.getMinutes();
+                // Seconds part from the timestamp
+                // var seconds = "0" + date.getSeconds();
+                // Will display time in 10:30:23 format
+                var sunrise_time = hourssunrise + ':' + minutessunrise.substr(-2);
+                //Sonnenuntergang
+                var sunsetj = wetterj.sys.sunset;
+                var sunset = new Date(sunsetj*1000);
+                var hourssunset = sunset.getHours();
+                var minutessunset = "0" + sunset.getMinutes();
+                var sunset_time = hourssunset + ':' + minutessunset.substr(-2);
+                //Sichtweite
+                var visibility_m = wetterj.visibility;
+                var visibility_number = Number(visibility_m)/1000;
+                //$('#stage').html('<p> Ort: ' + wetterj.name + '</p>');
+                //$('#stage').append('<p> Wochentag: ' + Wochentag + '</p>');
+                //$('#stage').append('<p> Datum: ' + Datum + '</p>');
+                //$('#stage').append('<p> Uhrzeit: ' + uhrzeit + '</p>');
+                //$('#stage').append('Wetterupdate: ' + wetterupdate + '</br>');
+                //$('#stage').append('Allgemein: ' + wetterj.weather[0].description+ '</br>');
+                $('#icon').append('' + wetterj.weather[0].description+ '');
+                //$('#stage').append('Temperatur: ' + wetterj.main.temp+ '°C</br>');
+                $('#temp').append('' + Math.round(wetterj.main.temp)+ ' °C');
+                $('#stage').append('Luftfeuchte: ' + wetterj.main.humidity+ ' %</br>');
+                $('#humidity').append('' + wetterj.main.humidity+ ' %');
+                //$('#stage').append('<p>Max. Temperatur: ' + wetterj.main.temp_max+ '°C</p>');
+                //$('#stage').append('<p>Min. Temperatur: ' + wetterj.main.temp_min+ '°C</p>');
+                $('#stage').append('Luftdruck: ' + wetterj.main.pressure+ ' hPa</br>');
+                $('#pressure').append('' + wetterj.main.pressure+ ' hPa');
+                $('#stage').append('Sichtweite: ' + visibility_number+ ' km</br>');
+                $('#visibility').append('' + visibility_number+ ' km');
+                $('#stage').append('Wind: ' + wetterj.wind.speed+ ' km/h</br>');
+                $('#wind').append('' + wetterj.wind.speed+ ' km/h');
+                $('#stage').append('Bewölkung: ' + wetterj.clouds.all+ ' %</br>');
+                $('#clouds').append('' + wetterj.clouds.all+ ' %');
+                $('#stage').append('Sonnenaufgang: ' + sunrise_time+ ' Uhr</br>');
+                $('#rise').append('<div id="rise_icon"></div>' + sunrise_time+ '');
+                $('#stage').append('Sonnenuntergang: ' + sunset_time+ ' Uhr</br>'); 
+                $('#set').append('<div id="set_icon"></div>' + sunset_time+ ''); 
+              }
+            );  
+          };
+        setInterval(fetch, 1800000);// call fetch every 30 minutes
+        fetch(); // call fetch first time
+      }
+    );
+    </script>
+    
+    <!-- Forecast Weather APi -->
+    <script type="text/javascript" language="javascript">
+      $(document).ready(function()
+       {
+        function fetch4()
+          {
+            $.getJSON('https://api.openweathermap.org/data/2.5/forecast?<<weather_place>>&units=metric&lang=de&APPID=<<OPEN_API_KEY>>', function(wetterf)
+              {
+                console.log(wetterf);
+                
+                //MAX MIN TEMP
+                $('#max').empty();
+                $('#min').empty();
+                var temps = []; // empty array
+                $.each( wetterf.list, function(index, value)
+                  {
+                    temps.push(value.main.temp);
+                  }
+                );
+                var temps_array = temps.slice(0,8);
+                temps_array = temps_array.map(function(each_element)
+                  {
+                    return Number(Math.round(each_element));
+                  } 
+                );
+                temps_array.sort(function(a, b){return b - a});
+                console.log(temps_array);
+                console.log(temps_array[0]);
+                console.log(temps_array[7]);
+                $('#max').append(''+ temps_array[0]+' °C');
+                $('#min').append(''+temps_array[7]+' °C');
+                $('#fcast').empty();
+                
+                //8 FORECASTs
+                var i = 0;
+                  do
+                    {
+                      var forecast_time = wetterf.list[i].dt;
+                      var date = new Date(forecast_time*1000);
+                      var hours_fcast = date.getHours()-1;
+                      var minutes_fcast = "0" + date.getMinutes();
+                      var fcast_time_final = hours_fcast + ':' + minutes_fcast.substr(-2);
+                      var forecast_temp = Math.round(wetterf.list[i].main.temp);
+                      var forecast_icon = wetterf.list[i].weather[0].description;
+                      $('.t4').append(' <div id="fcast--'+i+'"> <div id="temps"> ' + forecast_temp + ' °C </div> <div id="icons"> ' + forecast_icon + ' </div> <div id="finals"> ' + fcast_time_final + ' </div> </div>');
+                      i++;
+                    }
+                  while (i<=7);
+                }  
+            );  
+          };
+        setInterval(fetch, 10800000);// call fetch every 3 hours
+        fetch4(); // call fetch first time
+      }
+    );
+    </script>
+    
+    <!-- MVG Data -->
+    <script type="text/javascript" language="javascript">
+      $(document).ready(function()
+        {
+          function fetch3()
+            {
+              $.getJSON('https://<<HOST>>/mvg2.json', function(mvgj2)
+                {
+                  console.log(mvgj2);   
+                  $('#mvg2').empty();
+                  var i = 0;
+                  do
+                    {
+                      var jetzt = new Date();
+                      //departures[i].departureTime
+                      //departures[i].destination
+                      var unixTimestamp = mvgj2.departures[i].departureTime;
+                      var date = new Date(unixTimestamp);
+                      var hours_update = date.getHours();
+                      var minutes_update = "0" + date.getMinutes();
+                      var departure_update = hours_update + ':' + minutes_update.substr(-2);
+                      //console.log(departure_update);
+                      //var delta = jetzt-mvgj2.departures[i].departuretime;
+                      //var delta_min = delta.getMinutes();
+                      var deptime_date = new Date(mvgj2.departures[i].departureTime);
+                      var delta = (deptime_date.getTime() - jetzt.getTime())/1000/60;
+                      var round_delta = Math.round(delta);
+                      //console.log(round_delta);
+                      var dest = mvgj2.departures[i].destination;
+                      $('#mvg2').append('<div id="u3"></div><div id = "station">' + dest + ' </div><div id = "time">' + departure_update + ' </div><div id = "minutes">in '+ round_delta + ' Minuten</div><br>');
+                      //$('#mvg2').append('<p><div id = "station" style = "width: 40%; float: left;">' + dest + ' </div><div id = "time" style = "width: 20%; float: left;">' + departure_update + ' </div></p>');
+                      //console.log(jetzt.setMinutes(jetzt.getMinutes() + Number(mvgj.result_sorted[i].minutes)));
+                      //var hoursjetzt = jetzt.getHours();
+                      //var minutesjetzt = "0" + jetzt.getMinutes();
+                      //var uhrzeit = hoursjetzt + ':' + minutesjetzt.substr(-2);
+                      //$('#mvg2').append('<p><div id = "station" style = "width: 40%; float: left;">' + mvgj.result_sorted[i].destination + ' </div><div id = "time" style = "width: 20%; float: left;">' + uhrzeit + ' </div><div id = "minutes" style = "width: 40%; float: left;">in '+ mvgj.result_sorted[i].minutes + ' Minuten</div></p>');
+                      i++;
+                    }
+                  while (i<=13);
+                }
+                );
+            };
+          setInterval(fetch3, 30000);// call fetch every 30 seconds
+          fetch3(); // call fetch first time
+         }
+         );
+    </script>
+    
+    <!-- Weather API comparison -->
+    <script type="text/javascript" language="javascript">
+      $(document).ready(function()
+       {
+        function fetch()
+          {
+            $.getJSON('https://api.openweathermap.org/data/2.5/weather?<<weather_place>>&units=metric&lang=de&APPID=<<OPEN_API_KEY>>', function(wetter_open)
+              {
+                console.log(wetter_open);
+                $('#open_temp').empty();
+                $('#open_temp').append(' Open: ' + Math.round(wetter_open.main.temp)+ ' °C'); 
+              }
+            );  
+          };
+        setInterval(fetch, 1800000);// call fetch every 30 minutes
+        fetch(); // call fetch first time
+      }
+    );
+    
+    $(document).ready(function()
+       {
+        function fetch2()
+          {
+            $.getJSON('https://dataservice.accuweather.com/currentconditions/v1/<<accu_location_id>>?apikey=<<accu_key>>', function(wetter_accu)
+              {
+                console.log(wetter_accu);
+                $('#accu_temp').empty();
+                $('#accu_temp').append(' Accu: ' + Math.round(wetter_accu[0].Temperature.Metric.Value)+ ' °C'); 
+              }
+            );  
+          };
+        setInterval(fetch2, 1800000);// call fetch every 30 minutes
+        fetch2(); // call fetch first time
+      }
+    );
+
+    $(document).ready(function()
+       {
+        function fetch3()
+          {
+            $.getJSON('https://query.yahooapis.com/v1/public/yql?q=select%20item.condition%20from%20weather.forecast%20where%20woeid%20%3D%20699072&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&u=c', function(wetter_yahoo)
+              {
+                console.log(wetter_yahoo);
+                $('#yahoo_temp').empty();
+                $('#yahoo_temp').append(' Yahoo: ' + Math.round((Math.round(wetter_yahoo.query.results.channel.item.condition.temp)-32)*5/9) + ' °C'); 
+              }
+            );  
+          };
+        setInterval(fetch3, 1800000);// call fetch every 30 minutes
+        fetch3(); // call fetch first time
+      }
+    );
+
+    </script>
+
+    <script type="text/javascript" language="javascript">
+      $(document).ready(function()
+       {
+        function fetch()
+          {
+            $.getJSON('https://api.openweathermap.org/data/2.5/weather?<<weather_place>>&units=metric&lang=de&APPID=<<OPEN_API_KEY>>', function(wetter_open)
+              {
+                console.log(wetter_open);
+                $('#M_open_temp').empty();
+                $('#M_open_temp').append('M Open: ' + Math.round(wetter_open.main.temp)+ ' °C'); 
+              }
+            );  
+          };
+        setInterval(fetch, 1800000);// call fetch every 30 minutes
+        fetch(); // call fetch first time
+      }
+    );
+    
+    $(document).ready(function()
+       {
+        function fetch2()
+          {
+            $.getJSON('https://dataservice.accuweather.com/currentconditions/v1/<<accu_location_id>>?apikey=<<accu_key>>', function(wetter_accu)
+              {
+                console.log(wetter_accu);
+                $('#M_accu_temp').empty();
+                $('#M_accu_temp').append('M Accu: ' + Math.round(wetter_accu[0].Temperature.Metric.Value)+ ' °C'); 
+              }
+            );  
+          };
+        setInterval(fetch2, 1800000);// call fetch every 30 minutes
+        fetch2(); // call fetch first time
+      }
+    );
+
+    $(document).ready(function()
+       {
+        function fetch3()
+          {
+            $.getJSON('https://query.yahooapis.com/v1/public/yql?q=select%20item.condition%20from%20weather.forecast%20where%20woeid%20%3D%20676757&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&u=c', function(wetter_yahoo)
+              {
+                console.log(wetter_yahoo);
+                $('#M_yahoo_temp').empty();
+                $('#M_yahoo_temp').append('M Yahoo: ' + Math.round((Math.round(wetter_yahoo.query.results.channel.item.condition.temp)-32)*5/9) + ' °C'); 
+              }
+            );  
+          };
+        setInterval(fetch3, 1800000);// call fetch every 30 minutes
+        fetch3(); // call fetch first time
+      }
+    );
+
+    </script>
+
+
+    <script>
+    $(document).ready(function()
+    {
+      function fetch15()
+        {
+          $.get( "https://<<HOST>>/interruptions.json", function( data )
+           {
+            console.log(data);
+            $('#st_title').empty();
+            $('#st_text').empty();
+            for (var i=0, max=data.interruption.length; i<max; i++)
+              {
+                for (var y=0, max2=data.interruption[i].lines.line.length; y<max2; y++)
+                  {
+                    var check = "";
+                    check = data.interruption[i].lines.line[y].line;
+                    //console.log(check);
+                    // replace with desired lines
+                    if (check==='U2' || check==='U3' || check==='U6')
+                      {
+                        console.log(data.interruption[i].title);
+                        console.log(data.interruption[i].text);
+                        $('#st_title').append('' + data.interruption[i].title + ''); 
+                        $('#st_text').append('' + data.interruption[i].text + '');
+                        break;
+                      }
+                  }
+              }
+          }
+          );
+      };
+      setInterval(fetch15, 30000);
+      fetch15();
+      }
+      );
+</script>
+
+  </head>
+  
+    <body>
+
+    <!--<div id="date_time" style = "text-align: center; margin: auto; border-style: solid; border-width: 1px;"></div>-->
+    <!--<div id="date_time2"></div>
+    <script type="text/javascript">window.onload = date_time('date_time');</script>-->
+
+    <div class="wrapper">
+  <div class="t1">
+    <div id="date_time3"></div>
+    <div id="day"></div>
+    <div id="sun">
+      <div id="rise"></div>
+      <div id="set"></div>
+    </div>
+  </div>
+  <div class="t2">
+    <div id="container_temp">
+
+
+    <div id="temp"></div>
+    <div id="maxmin">
+      <div id="max"></div>
+      <div id="min"></div>
+    </div>
+    </div>
+    <div id="basics">
+      <div id="humidity"></div>
+      <div id="wind"></div>
+    </div>
+  </div>
+  <div class="t3">
+    <div id="icon"></div>
+    <div id="advanced">
+      <div id="clouds"></div>
+      <div id="visibility"></div>
+      <div id="pressure"></div>
+    </div>
+  </div>
+  <div class="break"></div>
+  <div class="t4"></div>
+  <div class="break"></div>
+  <div class="mvg" id="mvg2"></div>
+</div>
+<div id="open_temp"> Open: </div>
+<div id="accu_temp"> Accu: </div>
+<div id="yahoo_temp"> Yahoo: </div>
+<div id="M_open_temp"> Open: </div>
+<div id="M_accu_temp"> Accu: </div>
+<div id="M_yahoo_temp"> Yahoo: </div>
+<div id="Stoerung">
+  <div id="st_title"></div>
+  <div id="st_text"></div>
+  </div>
+</body>
+</html>
